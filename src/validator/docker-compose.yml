@@ -1,0 +1,22 @@
+version: "3.5"
+
+services:
+  validator:
+    image: validator:latest
+    container_name: validator
+    environment:
+      DATABASE_NAME: snkrsdb
+      DATABASE_HOST: snkrs_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      PIPELINE_HOST: pipeline
+      INCOMING_QUEUE: checkDatabase
+      OUTGOING_QUEUE: notifyWebhooks
+    networks:
+      - monitor
+    restart: always
+
+networks:
+  monitor:
+    external: true

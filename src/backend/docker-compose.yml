@@ -1,0 +1,36 @@
+version: "3.5"
+
+services:
+  database:
+    image: postgres:latest
+    container_name: snkrs_database
+    #environment:
+      #POSTGRES_PASSWORD: postgres
+      #POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - /var/storage/postgres:/var/lib/postgresql/data
+    networks:
+      - monitor
+    restart: always
+
+  pipeline:
+    image: rabbitmq:latest
+    container_name: pipeline
+    #environment:
+      #RABBITMQ_DEFAULT_USER: guest
+      #RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - /var/storage/rabbitmq:/var/lib/rabbitmq
+    networks:
+      - monitor
+    restart: always
+
+networks:
+  monitor:
+    name: monitor
+    driver: bridge

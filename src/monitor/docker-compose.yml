@@ -1,0 +1,22 @@
+version: "3.5"
+
+services:
+  monitor:
+    image: monitor:latest
+    container_name: monitor
+    environment:
+      REQUEST_FREQUENCY: 10 # defaults to 5 seconds
+      TARGET_URL: https://api.nike.com/snkrs/content/v1/?&country=US&language=en&offset=0&orderBy=published
+      PIPELINE_HOST: pipeline
+      OUTGOING_QUEUE: checkDatabase
+      #HTTP_PROXY: http://10.10.1.10:3128
+      #HTTPS_PROXY: http://10.10.1.10:1080
+    networks:
+      - monitor
+    restart: always
+
+networks:
+  monitor:
+    external: true
+
+

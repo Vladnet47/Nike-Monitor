@@ -1,0 +1,26 @@
+version: "3.5"
+
+services:
+  notifier:
+    image: notifier:latest
+    container_name: notifier
+    environment:
+      DATABASE_NAME: snkrsdb
+      DATABASE_HOST: snkrs_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      PIPELINE_HOST: pipeline
+      INCOMING_QUEUE: notifyWebhooks
+      URL_BASE: https://nike.com/launch/t/
+      NOTIFICATION_DEFAULT_TITLE: Title
+      NOTIFICATION_DEFAULT_COLOR: 0x00ff00
+      NOTIFICATION_DEFAULT_SIZE_SEPARATOR: ", "
+      NOTIFICATION_DEFAULT_IMAGE: https://pbs.twimg.com/profile_images/1102793173351448576/7L3kCKp5_400x400.png
+    networks:
+      - monitor
+    restart: always
+
+networks:
+  monitor:
+    external: true

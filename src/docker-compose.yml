@@ -1,0 +1,113 @@
+version: "3.5"
+
+services:
+  database:
+    image: postgres:latest
+    container_name: snkrs_database
+    #environment:
+      #POSTGRES_PASSWORD: postgres
+      #POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - /var/storage/postgres:/var/lib/postgresql/data
+    networks:
+      - monitor
+    restart: always
+
+  pipeline:
+    image: rabbitmq:latest
+    container_name: pipeline
+    #environment:
+      #RABBITMQ_DEFAULT_USER: guest
+      #RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - /var/storage/rabbitmq:/var/lib/rabbitmq
+    networks:
+      - monitor
+    restart: always
+
+  management_api:
+    image: management_api:latest
+    container_name: management_api
+    environment:
+      DATABASE_NAME: snkrsdb
+      DATABASE_HOST: snkrs_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+    ports:
+      - "8080:80"
+    networks:
+      - monitor
+    depends_on:
+      - database
+    restart: always
+
+  validator:
+    image: validator:latest
+    container_name: validator
+    environment:
+      DATABASE_NAME: snkrsdb
+      DATABASE_HOST: snkrs_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      PIPELINE_HOST: pipeline
+      INCOMING_QUEUE: checkDatabase
+      OUTGOING_QUEUE: notifyWebhooks
+    networks:
+      - monitor
+    depends_on:
+      - database
+      - pipeline
+    restart: always
+
+  notifier:
+    image: notifier:latest
+    container_name: notifier
+    environment:
+      DATABASE_NAME: snkrsdb
+      DATABASE_HOST: snkrs_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      PIPELINE_HOST: pipeline
+      INCOMING_QUEUE: notifyWebhooks
+      URL_BASE: https://nike.com/launch/t/
+      ICON_URL: https://pbs.twimg.com/profile_images/1102793173351448576/7L3kCKp5_400x400.png
+    networks:
+      - monitor
+    depends_on:
+      - database
+      - pipeline
+    restart: always
+
+  monitor:
+    image: monitor:latest
+    container_name: monitor
+    environment:
+      REQUEST_FREQUENCY: 10 # defaults to 5 seconds
+      TARGET_URL: https://api.nike.com/snkrs/content/v1/?&country=US&language=en&offset=0&orderBy=published
+      PIPELINE_HOST: pipeline
+      OUTGOING_QUEUE: checkDatabase
+      #HTTP_PROXY: http://10.10.1.10:3128
+      #HTTPS_PROXY: http://10.10.1.10:1080
+    networks:
+      - monitor
+    depends_on:
+      - database
+      - pipeline
+      - database_checker
+      - notifier
+    restart: always
+
+networks:
+  monitor:
+    name: monitor
+    driver: bridge
+
+

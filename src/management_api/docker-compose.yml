@@ -1,0 +1,21 @@
+version: "3.5"
+
+services:
+  management_api:
+    image: management_api:latest
+    container_name: management_api
+    environment:
+      DATABASE_NAME: snkrsdb
+      DATABASE_HOST: snkrs_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+    ports:
+      - "8080:80"
+    networks:
+      - monitor
+    restart: always
+
+networks:
+  monitor:
+    external: true
