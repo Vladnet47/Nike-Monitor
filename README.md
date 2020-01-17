@@ -27,7 +27,9 @@ Every module in the system exists in it's own [Docker][3] container, allowing si
 
 The following diagram shows the main modules in the system: the [monitor][11], [validator][12], and the [notifier][13].
 
+<br/>
 ![][21]
+<br/>
 
 Each module performs a different task.
 - The [monitor][11] sends a request to the Nike API, retrieves a list of products, and sends each product to the first pipeline.
@@ -36,7 +38,9 @@ Each module performs a different task.
 
 Since each pipeline may have different loads, the system can be scaled to something like this:
 
+<br/>
 ![][22]
+<br/>
 
 There are a few modules that never scale, namely the [backend][15] and the [management api][14].
 - The [backend][15] is responsible for launching the [PostgreSQL][2] database and the [RabbitMQ][1] message broker, or pipeline. Both the database and the pipeline are mounted to local folders on the host machine, meaning no data is lost (even if containers go down).
@@ -44,7 +48,9 @@ There are a few modules that never scale, namely the [backend][15] and the [mana
 
 Here is the final, all-inclusive diagram of the system:
 
+<br/>
 ![][23]
+<br/>
 
 <br/>
 
