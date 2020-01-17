@@ -59,6 +59,17 @@ Here is the final, all-inclusive diagram of the system:
 <br/>
 
 ## Helpful Links
+[RabbitMQ][1]
+
+[PostgreSQL][2]
+
+[Docker][3]
+
+[Docker-compose][4]
+
+[Kubernetes][5]
+
+[Scalability Principles][6]
 
 [1]: https://www.rabbitmq.com/
 [2]: https://www.postgresql.org/
